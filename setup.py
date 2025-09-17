@@ -71,7 +71,12 @@ setup(
     zip_safe=False,
     platforms='any',
     install_requires=[
-        'Flask>=0.6',
+        # first Flask dropping flask.Markup in favor of MarkupSafe
+        "Flask>=0.11",
+        # first MarkupSafe with Markup class
+        "MarkupSafe>=0.23",
+        # first Werkzeug with import_string & cached_property
+        "Werkzeug>=0.7",
     ],
     test_suite='nose.collector',
     tests_require=[
