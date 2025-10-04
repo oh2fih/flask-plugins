@@ -1,31 +1,32 @@
-.PHONY: clean
+.PHONY: clean help sdist release release-test develop test
 
 help:
-	    @echo "  clean       remove unwanted stuff"
-	    @echo "  release     package and upload a release"
-	    @echo "  develop     make a development package"
-	    @echo "  sdist       package"
-	    @echo "  test        run the tests"
+	@echo "  clean           remove unwanted files"
+	@echo "  sdist           build source distribution"
+	@echo "  release         build and upload to PyPI"
+	@echo "  release-test    build and upload to TestPyPI"
+	@echo "  develop         install package in editable mode"
+	@echo "  test            run tests with pytest"
 
 clean:
-	    find . -name '*.pyc' -exec rm -f {} +
-	    find . -name '*.pyo' -exec rm -f {} +
-	    find . -name '*~' -exec rm -f {} +
-	    find . -name '.DS_Store' -exec rm -f {} +
-	    find . -name '__pycache__' -exec rm -rf {} +
-	    find . -name '.coverage' -exec rm -rf {} +
-
-release: register
-	    python setup.py sdist upload
-
-register:
-	    python setup.py register
+	find . -name '*.pyc' -exec rm -f {} +
+	find . -name '*.pyo' -exec rm -f {} +
+	find . -name '*~' -exec rm -f {} +
+	find . -name '.DS_Store' -exec rm -f {} +
+	find . -name '__pycache__' -exec rm -rf {} +
+	find . -name '.coverage' -exec rm -rf {} +
 
 sdist:
-	    python setup.py sdist
+	python -m build --sdist
+
+release: sdist
+	twine upload dist/*
+
+release-test: sdist
+	twine upload --repository testpypi dist/*
 
 develop:
-	    python setup.py develop
+	pip install -e .
 
 test:
-	    nosetests --cover-package=flask_plugins --with-coverage
+	pytest
