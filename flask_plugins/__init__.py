@@ -19,12 +19,16 @@ from werkzeug.utils import cached_property, import_string
 from markupsafe import Markup
 from flask import json
 # Find the stack on which we want to store the database connection.
-# Starting with Flask 0.9, the _app_ctx_stack is the correct one,
-# before that we need to use the _request_ctx_stack.
 try:
+    # Flask >=0.9, <2.0
     from flask import _app_ctx_stack as stack
 except ImportError:
-    from flask import _request_ctx_stack as stack
+    try:
+        # Very old Flask (<0.9)
+        from flask import _request_ctx_stack as stack
+    except ImportError:
+        # Flask >=2.0: no private stacks, use g as a fallback
+        from flask import g as stack
 
 from ._compat import itervalues, iteritems, intern_method
 
